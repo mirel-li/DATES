@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Свидания</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #FAF8F5;
+  --ink: #1C1A18;
+  --ink-soft: #6B6560;
+  --border: rgba(28,26,24,0.1);
+  --radius: 14px;
+  --gap: 10px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.site-header {
+  text-align: center;
+  padding: 56px 20px 20px;
+}
+.site-header::before {
+  content: '♡';
+  display: block;
+  font-size: 22px;
+  margin-bottom: 12px;
+  opacity: 0.35;
+  color: #C76D52;
+}
+.site-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(42px, 8vw, 72px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: var(--ink);
+}
+.site-subtitle {
+  margin-top: 10px;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.instruction-wrap {
+  max-width: 820px;
+  margin: 36px auto 0;
+  padding: 0 20px;
+}
+.instruction-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 20px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  transition: background 0.2s, border-color 0.2s;
+}
+.instruction-toggle:hover { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.2); }
+.instruction-toggle .chevron { transition: transform 0.3s; font-size: 10px; opacity: 0.5; }
+.instruction-toggle.open .chevron { transform: rotate(180deg); }
+.instruction-body {
+  display: none;
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  background: white;
+  overflow: hidden;
+}
+.instruction-body.visible { display: block; }
+
+.instr-how { padding: 24px 28px 20px; border-bottom: 1px solid var(--border); }
+.instr-how-title { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 12px; }
+.instr-steps { display: flex; gap: 10px; flex-wrap: wrap; }
+.instr-step { display: flex; align-items: flex-start; gap: 10px; background: var(--bg); border-radius: 10px; padding: 10px 14px; flex: 1; min-width: 160px; }
+.instr-step-num { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: #C76D52; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+.instr-step-text { font-size: 12.5px; line-height: 1.5; color: var(--ink); }
+.instr-step-text b { font-weight: 600; display: block; margin-bottom: 2px; }
+
+.instr-cats { padding: 20px 28px; border-bottom: 1px solid var(--border); }
+.instr-cats-title { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 12px; }
+.instr-cats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.instr-cat-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 10px; border-left: 3px solid transparent; }
+.instr-cat-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.instr-cat-name { font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.instr-cat-desc { font-size: 11px; color: var(--ink-soft); line-height: 1.4; }
+
+.instr-tags { padding: 20px 28px 24px; }
+.instr-tags-title { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 14px; }
+.instr-tags-cols { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px 32px; }
+.instr-tag-group-title { font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); opacity: 0.7; margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid var(--border); }
+.instr-tag-row { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--ink); padding: 3px 0; line-height: 1.4; }
+.instr-tag-emoji { font-size: 15px; flex-shrink: 0; }
+.instr-tag-label { color: var(--ink-soft); font-size: 11.5px; }
+
+.legend-wrap { max-width: 900px; margin: 32px auto 0; padding: 0 20px; }
+.legend-title { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 14px; }
+.legend-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 500; color: var(--ink); background: white; border: 1px solid var(--border); border-radius: 30px; padding: 5px 13px 5px 8px; }
+.legend-dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; border: 1.5px solid rgba(0,0,0,0.1); }
+
+.main { max-width: 900px; margin: 40px auto 0; padding: 0 20px; }
+.category-block { margin-bottom: 44px; }
+.category-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+.category-name { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; color: var(--ink); line-height: 1; }
+.category-count { font-size: 11px; letter-spacing: 0.1em; color: var(--ink-soft); }
+.cells-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--gap); }
+
+.cell {
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.18s, box-shadow 0.18s;
+  border: 1.5px solid rgba(0,0,0,0.08);
+  user-select: none;
+}
+.cell:hover { transform: scale(1.04); box-shadow: 0 8px 28px rgba(0,0,0,0.13); z-index: 2; }
+.cell:active { transform: scale(0.97); }
+.cell-number { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; line-height: 1; color: rgba(0,0,0,0.4); transition: opacity 0.2s; }
+.cell.opened .cell-number { opacity: 0.2; }
+.cell.opened::after { content: '✓'; position: absolute; font-size: 22px; color: rgba(0,0,0,0.3); font-family: 'Inter', sans-serif; font-weight: 500; }
+.cell.secret { background: #E6A5B5 !important; }
+.cell.secret .cell-number { color: rgba(255,255,255,0.6); }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28,26,24,0.55);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+.modal-overlay.visible { opacity: 1; pointer-events: all; }
+
+.card-modal {
+  width: 320px;
+  max-width: 100%;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.28s cubic-bezier(.22,.68,0,1.2);
+  background: #FAF8F5;
+  position: relative;
+  max-height: 92vh;
+  overflow-y: auto;
+}
+.modal-overlay.visible .card-modal { transform: translateY(0) scale(1); }
+
+.modal-photo {
+  height: 190px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-photo-placeholder {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 8px;
+  color: rgba(255,255,255,0.5);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.modal-photo::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 50px;
+  background: linear-gradient(transparent, #FAF8F5);
+}
+.modal-cat-pill {
+  position: absolute;
+  top: 14px; left: 14px;
+  background: rgba(28,26,24,0.6);
+  backdrop-filter: blur(6px);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: 20px;
+  z-index: 2;
+}
+.modal-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  z-index: 10;
+  width: 32px; height: 32px;
+  background: rgba(28,26,24,0.5);
+  backdrop-filter: blur(6px);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.modal-close:hover { background: rgba(28,26,24,0.8); }
+
+.modal-body { padding: 8px 20px 20px; display: flex; flex-direction: column; }
+.modal-number { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 3px; }
+.modal-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; color: var(--ink); line-height: 1.1; margin-bottom: 4px; }
+.modal-address { font-size: 12px; color: #C76D52; font-weight: 500; display: flex; align-items: center; gap: 4px; margin-bottom: 12px; }
+.modal-divider { width: 28px; height: 2px; border-radius: 1px; margin-bottom: 12px; }
+.modal-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.modal-meta-label { font-size: 8px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); opacity: 0.65; margin-bottom: 2px; }
+.modal-meta-value { font-size: 12.5px; font-weight: 500; color: var(--ink); }
+
+.modal-desc { font-size: 12px; color: var(--ink-soft); line-height: 1.55; margin-top: 10px; font-style: italic; min-height: 36px; }
+.modal-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 12px; }
+.modal-tag { font-size: 16px; padding: 4px 7px; border-radius: 8px; background: rgba(0,0,0,0.05); line-height: 1; cursor: default; position: relative; }
+.modal-tag:hover .modal-tag-tooltip { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+.modal-tag-tooltip { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%) translateY(4px); background: var(--ink); color: white; font-size: 10px; font-weight: 500; padding: 4px 8px; border-radius: 6px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.15s, transform 0.15s; z-index: 20; }
+
+.modal-links { display: flex; gap: 8px; margin-top: 12px; }
+.modal-link-field { flex: 1; position: relative; }
+.modal-link-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; pointer-events: none; }
+.modal-link-input { width: 100%; padding: 8px 10px 8px 30px; border-radius: 8px; border: 1.5px solid var(--border); background: white; font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink); transition: border-color 0.2s; outline: none; }
+.modal-link-input::placeholder { color: rgba(107,101,96,0.5); }
+.modal-link-input:focus { border-color: rgba(28,26,24,0.3); }
+.modal-link-open { display: none; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; background: var(--ink); color: white; text-decoration: none; font-size: 12px; flex-shrink: 0; margin-top: 2px; transition: opacity 0.2s; }
+.modal-link-open:hover { opacity: 0.8; }
+.modal-link-open.visible { display: flex; }
+
+.modal-done-btn { margin-top: 12px; padding: 11px; border-radius: 10px; border: 1.5px solid rgba(0,0,0,0.12); background: none; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink-soft); cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em; width: 100%; }
+.modal-done-btn:hover { background: var(--ink); color: white; border-color: var(--ink); }
+.modal-done-btn.done { background: #8FAF88; color: white; border-color: #8FAF88; }
+
+.modal-footer { padding: 0 20px 20px; }
+.modal-stripe { height: 3px; background: linear-gradient(90deg, #C76D52, #D4A853, #8FAF88); flex-shrink: 0; }
+
+@media (max-width: 560px) {
+  .instr-cats-grid { grid-template-columns: 1fr 1fr; }
+  .instr-tags-cols { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-title">Свидания</div>
+  <div class="site-subtitle">150 идей для двоих</div>
+</header>
+
+<div class="instruction-wrap">
+  <button class="instruction-toggle" id="instrToggle" aria-expanded="false">
+    <span>Инструкция · категории · теги</span>
+    <span class="chevron">▼</span>
+  </button>
+  <div class="instruction-body" id="instrBody">
+    <div class="instr-how">
+      <div class="instr-how-title">Как пользоваться</div>
+      <div class="instr-steps">
+        <div class="instr-step"><div class="instr-step-num">1</div><div class="instr-step-text"><b>Выбери цвет</b>Определи категорию по цвету ячейки — от домашних вечеров до ночных приключений</div></div>
+        <div class="instr-step"><div class="instr-step-num">2</div><div class="instr-step-text"><b>Нажми на ячейку</b>Откроется карточка с деталями: место, бюджет, атмосфера и длительность</div></div>
+        <div class="instr-step"><div class="instr-step-num">3</div><div class="instr-step-text"><b>Добавь ссылки</b>Вставь Instagram и сайт места прямо в карточку — они сохранятся</div></div>
+        <div class="instr-step"><div class="instr-step-num">4</div><div class="instr-step-text"><b>Отметь «Сходили»</b>После свидания нажми кнопку — ячейка покажет галочку ✓</div></div>
+      </div>
+    </div>
+    <div class="instr-cats">
+      <div class="instr-cats-title">Категории</div>
+      <div class="instr-cats-grid">
+        <div class="instr-cat-item" style="background:#F4EBDD22;border-left-color:#D4B483"><div class="instr-cat-dot" style="background:#F4EBDD;border:2px solid #D4B483"></div><div><div class="instr-cat-name">🏠 Дома</div><div class="instr-cat-desc">Кино, готовка, настолки, SPA и уютные вечера не выходя из дома</div></div></div>
+        <div class="instr-cat-item" style="background:#7A9BB822;border-left-color:#7A9BB8"><div class="instr-cat-dot" style="background:#7A9BB8"></div><div><div class="instr-cat-name">🌆 В городе</div><div class="instr-cat-desc">VR, квесты, музеи, падел, бассейн, боулинг и городские парки</div></div></div>
+        <div class="instr-cat-item" style="background:#8FAF8822;border-left-color:#8FAF88"><div class="instr-cat-dot" style="background:#8FAF88"></div><div><div class="instr-cat-name">🌿 Природа</div><div class="instr-cat-desc">Леса, озёра, экофермы, тропы и пикники на свежем воздухе</div></div></div>
+        <div class="instr-cat-item" style="background:#D4B48322;border-left-color:#D4B483"><div class="instr-cat-dot" style="background:#D4B483"></div><div><div class="instr-cat-name">🚗 За городом</div><div class="instr-cat-desc">Родельбан, замки, воздушные шары и необычные загородные места</div></div></div>
+        <div class="instr-cat-item" style="background:#C76D5222;border-left-color:#C76D52"><div class="instr-cat-dot" style="background:#C76D52"></div><div><div class="instr-cat-name">🍽️ Кафе и рестораны</div><div class="instr-cat-desc">Заведения всех форматов: от уличных маркетов до ужинов при свечах</div></div></div>
+        <div class="instr-cat-item" style="background:#5B4B8A22;border-left-color:#5B4B8A"><div class="instr-cat-dot" style="background:#5B4B8A"></div><div><div class="instr-cat-name">🌙 Ночная жизнь</div><div class="instr-cat-desc">Клубы, бары, живая музыка, концерты и ночные приключения</div></div></div>
+        <div class="instr-cat-item" style="background:#A7D8C922;border-left-color:#A7D8C9"><div class="instr-cat-dot" style="background:#A7D8C9"></div><div><div class="instr-cat-name">💆 Отдых и SPA</div><div class="instr-cat-desc">Термы, массаж, бани, флоат-капсулы и SPA-комплексы</div></div></div>
+        <div class="instr-cat-item" style="background:#E6A5B522;border-left-color:#E6A5B5"><div class="instr-cat-dot" style="background:#E6A5B5"></div><div><div class="instr-cat-name">✨ Секретные</div><div class="instr-cat-desc">10 особых сюрпризов — загадочные свидания, о которых знаешь только ты</div></div></div>
+      </div>
+    </div>
+    <div class="instr-tags">
+      <div class="instr-tags-title">Расшифровка тегов</div>
+      <div class="instr-tags-cols">
+        <div class="instr-tag-group">
+          <div class="instr-tag-group-title">❤️ Атмосфера</div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">❤️</span><span class="instr-tag-label">Романтично</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">✨</span><span class="instr-tag-label">Вау-эффект</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">🕯️</span><span class="instr-tag-label">Уютно</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">😌</span><span class="instr-tag-label">Спокойно</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">🎉</span><span class="instr-tag-label">Весело</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">🌿</span><span class="instr-tag-label">Уединенно</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">💬</span><span class="instr-tag-label">Для разговоров</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">📸</span><span class="instr-tag-label">Инстаграмно</span></div>
+        </div>
+        <div class="instr-tag-group">
+          <div class="instr-tag-group-title">💰 Стоимость</div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">🆓</span><span class="instr-tag-label">Бесплатно</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">💸</span><span class="instr-tag-label">До 20 €</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">💸💸</span><span class="instr-tag-label">20–50 €</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">💸💸💸</span><span class="instr-tag-label">50–100 €</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">💎</span><span class="instr-tag-label">100 €+</span></div>
+        </div>
+        <div class="instr-tag-group">
+          <div class="instr-tag-group-title">⏱️ Длительность</div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">⚡</span><span class="instr-tag-label">До часа</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">🕑</span><span class="instr-tag-label">1–2 часа</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">🌅</span><span class="instr-tag-label">Полдня</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">🌙</span><span class="instr-tag-label">Весь вечер</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">☀️</span><span class="instr-tag-label">Целый день</span></div>
+        </div>
+        <div class="instr-tag-group">
+          <div class="instr-tag-group-title">⚡ Активность</div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">🛋️</span><span class="instr-tag-label">Расслабленно</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">🚶</span><span class="instr-tag-label">Прогулка</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">🏃</span><span class="instr-tag-label">Активно</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">🧗</span><span class="instr-tag-label">Экстрим</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">🧠</span><span class="instr-tag-label">Интеллектуально</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">🎨</span><span class="instr-tag-label">Творчески</span></div>
+          <div class="instr-tag-row"><span class="instr-tag-emoji">🤲</span><span class="instr-tag-label">Своими руками</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="legend-wrap">
+  <div class="legend-title">Категории по цвету</div>
+  <div class="legend-grid">
+    <div class="legend-item"><div class="legend-dot" style="background:#F4EBDD"></div>🏠 Дома</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#7A9BB8"></div>🌆 В городе</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#8FAF88"></div>🌿 Природа</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#D4B483"></div>🚗 За городом</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#C76D52"></div>🍽️ Кафе</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#5B4B8A"></div>🌙 Ночная жизнь</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#A7D8C9"></div>💆 SPA</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#E6A5B5"></div>✨ Секрет</div>
+  </div>
+</div>
+
+<main class="main" id="main"></main>
+
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true">
+  <div class="card-modal" id="cardModal">
+    <button class="modal-close" id="modalClose" aria-label="Закрыть">✕</button>
+    <div class="modal-photo" id="modalPhoto">
+      <div class="modal-cat-pill" id="modalCatPill"></div>
+      <div class="modal-photo-placeholder">
+        <svg width="36" height="36" viewBox="0 0 44 44" fill="none"><path d="M4 36 L16 16 L24 26 L30 20 L40 36Z" stroke="white" stroke-width="1.5" stroke-linejoin="round" fill="none"/><circle cx="33" cy="12" r="4" stroke="white" stroke-width="1.5" fill="none"/></svg>
+        <span>Фото места</span>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-number" id="modalNumber"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-address">
+        <svg width="10" height="12" viewBox="0 0 10 12"><path d="M5 0C2.79 0 1 1.79 1 4c0 3 4 8 4 8s4-5 4-8c0-2.21-1.79-4-4-4zm0 5.5C4.17 5.5 3.5 4.83 3.5 4S4.17 2.5 5 2.5 6.5 3.17 6.5 4 5.83 5.5 5 5.5z" fill="#C76D52"/></svg>
+        <span id="modalAddressText"></span>
+      </div>
+      <div class="modal-divider" id="modalDivider"></div>
+      <div class="modal-desc" id="modalDesc">Добавьте описание места...</div>
+      <div class="modal-meta">
+        <div class="modal-meta-item"><div class="modal-meta-label">⏱ Длительность</div><div class="modal-meta-value" id="modalDuration"></div></div>
+        <div class="modal-meta-item"><div class="modal-meta-label">⚡ Активность</div><div class="modal-meta-value" id="modalActivity"></div></div>
+        <div class="modal-meta-item"><div class="modal-meta-label">💰 Бюджет</div><div class="modal-meta-value" id="modalBudget"></div></div>
+      </div>
+      <div class="modal-tags" id="modalTags"></div>
+      <div class="modal-links">
+        <div class="modal-link-field"><span class="modal-link-icon">📸</span><input class="modal-link-input" id="linkInsta" type="url" placeholder="Instagram / ссылка"></div>
+        <a class="modal-link-open" id="linkInstaOpen" target="_blank" rel="noopener" title="Открыть">↗</a>
+      </div>
+      <div class="modal-links">
+        <div class="modal-link-field"><span class="modal-link-icon">🌐</span><input class="modal-link-input" id="linkSite" type="url" placeholder="Сайт / ссылка"></div>
+        <a class="modal-link-open" id="linkSiteOpen" target="_blank" rel="noopener" title="Открыть">↗</a>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-done-btn" id="modalDoneBtn">Отметить «Сходили» ✓</button>
+    </div>
+    <div class="modal-stripe"></div>
+  </div>
+</div>
+
+<script>
+const TAG_LABELS = {
+  '❤️':'Романтично','✨':'Вау-эффект','🕯️':'Уютно','😌':'Спокойно',
+  '🎉':'Весело','🌿':'Уединенно','💬':'Для разговоров','📸':'Инстаграмно',
+  '🆓':'Бесплатно','💸':'До 20 €','💸💸':'20–50 €','💸💸💸':'50–100 €','💎':'100 €+',
+  '⚡':'До часа','🕑':'1–2 часа','🌅':'Полдня','🌙':'Весь вечер','☀️':'Целый день',
+  '🛋️':'Расслабленно','🚶':'Прогулка','🏃':'Активно','🧗':'Экстрим',
+  '🧠':'Интеллектуально','🎨':'Творчески','🤲':'Своими руками'
+};
+
+const CATS = [
+  { key:'home', name:'🏠 Дома', color:'#F4EBDD', places:[
+    {title:'Кино-вечер дома',address:'Ваш диван',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'🕯️ Уютно',budget:'🆓 Бесплатно',tags:['❤️','🕯️']},
+    {title:'Готовим вместе',address:'Ваша кухня',duration:'🕑 1–2 часа',activity:'🤲 Своими руками',atmo:'🎉 Весело',budget:'💸 До 20 €',tags:['🎉','🤲']},
+    {title:'Настольные игры',address:'Ваш дом',duration:'🌙 Весь вечер',activity:'🧠 Интеллектуально',atmo:'🎉 Весело',budget:'🆓 Бесплатно',tags:['🎉','💬']},
+    {title:'Видеоигры вдвоём',address:'Ваш дом',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'😌 Спокойно',budget:'🆓 Бесплатно',tags:['🎉']},
+    {title:'SPA дома',address:'Ваша ванная',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸 До 20 €',tags:['❤️','🕯️']},
+    {title:'Пицца-вечер',address:'Ваша кухня',duration:'🕑 1–2 часа',activity:'🤲 Своими руками',atmo:'🎉 Весело',budget:'💸 До 20 €',tags:['🎉','🤲']},
+    {title:'Фото-сессия дома',address:'Ваш дом',duration:'⚡ До часа',activity:'🎨 Творчески',atmo:'📸 Инстаграмно',budget:'🆓 Бесплатно',tags:['📸','🎨']},
+    {title:'Мастер-класс по коктейлям',address:'Ваш бар дома',duration:'🕑 1–2 часа',activity:'🤲 Своими руками',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🎉','✨']},
+    {title:'Суши-вечер дома',address:'Ваша кухня',duration:'🕑 1–2 часа',activity:'🤲 Своими руками',atmo:'❤️ Романтично',budget:'💸💸 20–50 €',tags:['❤️','🤲']},
+    {title:'Виниловый вечер',address:'Ваш дом',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'🕯️ Уютно',budget:'🆓 Бесплатно',tags:['🕯️','💬']},
+    {title:'Рисование вдвоём',address:'Ваш дом',duration:'🕑 1–2 часа',activity:'🎨 Творчески',atmo:'😌 Спокойно',budget:'💸 До 20 €',tags:['🎨','😌']},
+    {title:'Квиз-вечер дома',address:'Ваш дом',duration:'🌙 Весь вечер',activity:'🧠 Интеллектуально',atmo:'🎉 Весело',budget:'🆓 Бесплатно',tags:['🧠','🎉']},
+    {title:'Смотрим сериал',address:'Ваш диван',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'🕯️ Уютно',budget:'🆓 Бесплатно',tags:['🕯️']},
+    {title:'Масочный вечер',address:'Ваша ванная',duration:'⚡ До часа',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸 До 20 €',tags:['❤️','🕯️']},
+    {title:'Готовим новый рецепт',address:'Ваша кухня',duration:'🌅 Полдня',activity:'🤲 Своими руками',atmo:'💬 Для разговоров',budget:'💸💸 20–50 €',tags:['🤲','💬']},
+    {title:'Пазл на 1000 деталей',address:'Ваш дом',duration:'🌙 Весь вечер',activity:'🧠 Интеллектуально',atmo:'😌 Спокойно',budget:'💸 До 20 €',tags:['😌','🕯️']},
+    {title:'Кулинарный баттл',address:'Ваша кухня',duration:'🕑 1–2 часа',activity:'🎉 Весело',atmo:'🎉 Весело',budget:'💸 До 20 €',tags:['🎉','🤲']},
+    {title:'Медитация вдвоём',address:'Ваш дом',duration:'⚡ До часа',activity:'🛋️ Расслабленно',atmo:'😌 Спокойно',budget:'🆓 Бесплатно',tags:['😌','❤️']},
+    {title:'Книжный клуб на двоих',address:'Ваш дом',duration:'🕑 1–2 часа',activity:'🧠 Интеллектуально',atmo:'💬 Для разговоров',budget:'🆓 Бесплатно',tags:['💬','🕯️']},
+    {title:'Завтрак в постель',address:'Ваша спальня',duration:'⚡ До часа',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸 До 20 €',tags:['❤️','🕯️']},
+  ]},
+  { key:'city', name:'🌆 В городе', color:'#7A9BB8', places:[
+    {title:'VR-аркада',address:'VR-клуб в центре',duration:'🕑 1–2 часа',activity:'🏃 Активно',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['✨','🎉']},
+    {title:'Квест-комната',address:'Escape-room',duration:'⚡ До часа',activity:'🧠 Интеллектуально',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['🧠','🎉']},
+    {title:'Художественный музей',address:'Главный музей',duration:'🕑 1–2 часа',activity:'🧠 Интеллектуально',atmo:'😌 Спокойно',budget:'💸 До 20 €',tags:['💬','📸']},
+    {title:'Падел-корт',address:'Padel Club',duration:'🕑 1–2 часа',activity:'🏃 Активно',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🏃','🎉']},
+    {title:'Бассейн',address:'Аквапарк',duration:'🌅 Полдня',activity:'🏃 Активно',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🏃','❤️']},
+    {title:'Боулинг',address:'Боулинг-клуб',duration:'🕑 1–2 часа',activity:'🏃 Активно',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🎉']},
+    {title:'Прогулка по паркам',address:'Городской парк',duration:'🌅 Полдня',activity:'🚶 Прогулка',atmo:'😌 Спокойно',budget:'🆓 Бесплатно',tags:['😌','❤️']},
+    {title:'Исторический музей',address:'Музей истории',duration:'🕑 1–2 часа',activity:'🧠 Интеллектуально',atmo:'💬 Для разговоров',budget:'💸 До 20 €',tags:['🧠','💬']},
+    {title:'Мастер-класс по керамике',address:'Гончарная студия',duration:'🌅 Полдня',activity:'🎨 Творчески',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['🎨','🤲']},
+    {title:'Катание на велосипеде',address:'Велопрокат в парке',duration:'🌅 Полдня',activity:'🏃 Активно',atmo:'😌 Спокойно',budget:'💸 До 20 €',tags:['🏃','📸']},
+    {title:'Планетарий',address:'Планетарий',duration:'🕑 1–2 часа',activity:'🧠 Интеллектуально',atmo:'✨ Вау-эффект',budget:'💸 До 20 €',tags:['✨','❤️']},
+    {title:'Скалодром',address:'Climbing-центр',duration:'🕑 1–2 часа',activity:'🧗 Экстрим',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🧗','🎉']},
+    {title:'Кинотеатр',address:'Кинотеатр',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'🕯️ Уютно',budget:'💸 До 20 €',tags:['❤️']},
+    {title:'Мастер-класс по рисованию',address:'Арт-студия',duration:'🕑 1–2 часа',activity:'🎨 Творчески',atmo:'😌 Спокойно',budget:'💸💸 20–50 €',tags:['🎨','💬']},
+    {title:'Батутный центр',address:'Jump Park',duration:'⚡ До часа',activity:'🏃 Активно',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🎉','✨']},
+    {title:'Зоопарк',address:'Городской зоопарк',duration:'🌅 Полдня',activity:'🚶 Прогулка',atmo:'😌 Спокойно',budget:'💸 До 20 €',tags:['😌','📸']},
+    {title:'Концерт живой музыки',address:'Джаз-клуб',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['✨','❤️']},
+    {title:'Пейнтбол',address:'Пейнтбол-клуб',duration:'🕑 1–2 часа',activity:'🧗 Экстрим',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🧗','🎉']},
+    {title:'Ботанический сад',address:'Оранжерея',duration:'🕑 1–2 часа',activity:'🚶 Прогулка',atmo:'😌 Спокойно',budget:'💸 До 20 €',tags:['😌','📸']},
+    {title:'Кулинарная школа',address:'Culinary school',duration:'🌅 Полдня',activity:'🤲 Своими руками',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🤲','💬']},
+  ]},
+  { key:'nature', name:'🌿 Природа', color:'#8FAF88', places:[
+    {title:'Поход в лес',address:'Лесной маршрут',duration:'☀️ Целый день',activity:'🏃 Активно',atmo:'🌿 Уединенно',budget:'🆓 Бесплатно',tags:['🌿','😌']},
+    {title:'Пикник у озера',address:'Городское озеро',duration:'🌅 Полдня',activity:'🚶 Прогулка',atmo:'❤️ Романтично',budget:'💸 До 20 €',tags:['❤️','📸']},
+    {title:'Экоферма',address:'Ферма за городом',duration:'☀️ Целый день',activity:'🚶 Прогулка',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['✨','🌿']},
+    {title:'Горная тропа',address:'Горный маршрут',duration:'☀️ Целый день',activity:'🧗 Экстрим',atmo:'🌿 Уединенно',budget:'🆓 Бесплатно',tags:['🧗','📸']},
+    {title:'Рассвет на природе',address:'Смотровая площадка',duration:'⚡ До часа',activity:'🚶 Прогулка',atmo:'✨ Вау-эффект',budget:'🆓 Бесплатно',tags:['✨','❤️']},
+    {title:'Купание в озере',address:'Природное озеро',duration:'🌅 Полдня',activity:'🏃 Активно',atmo:'😌 Спокойно',budget:'🆓 Бесплатно',tags:['😌','🌿']},
+    {title:'Пикник на горе',address:'Горная вершина',duration:'☀️ Целый день',activity:'🏃 Активно',atmo:'❤️ Романтично',budget:'💸 До 20 €',tags:['❤️','📸']},
+    {title:'Грибная охота',address:'Лес',duration:'🌅 Полдня',activity:'🚶 Прогулка',atmo:'🌿 Уединенно',budget:'🆓 Бесплатно',tags:['🌿','💬']},
+    {title:'Наблюдение за звёздами',address:'За городом',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'✨ Вау-эффект',budget:'🆓 Бесплатно',tags:['✨','❤️']},
+    {title:'Прогулка по ботсаду',address:'Ботанический сад',duration:'🕑 1–2 часа',activity:'🚶 Прогулка',atmo:'😌 Спокойно',budget:'💸 До 20 €',tags:['😌','📸']},
+    {title:'Рыбалка',address:'Река / озеро',duration:'☀️ Целый день',activity:'🛋️ Расслабленно',atmo:'🌿 Уединенно',budget:'💸 До 20 €',tags:['🌿','💬']},
+    {title:'Закат у реки',address:'Набережная',duration:'⚡ До часа',activity:'🚶 Прогулка',atmo:'❤️ Романтично',budget:'🆓 Бесплатно',tags:['❤️']},
+    {title:'Велосипед по природе',address:'Веломаршрут',duration:'🌅 Полдня',activity:'🏃 Активно',atmo:'😌 Спокойно',budget:'💸 До 20 €',tags:['🏃','📸']},
+    {title:'Костёр в лесу',address:'Лесная поляна',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'🕯️ Уютно',budget:'💸 До 20 €',tags:['🕯️','❤️']},
+    {title:'Каякинг',address:'Прокат каяков',duration:'🕑 1–2 часа',activity:'🧗 Экстрим',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['🧗','✨']},
+    {title:'Фотопрогулка',address:'Живописный маршрут',duration:'🌅 Полдня',activity:'🚶 Прогулка',atmo:'📸 Инстаграмно',budget:'🆓 Бесплатно',tags:['📸','💬']},
+    {title:'Пикник с вином',address:'Парк / поляна',duration:'🌅 Полдня',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸💸 20–50 €',tags:['❤️','🕯️']},
+    {title:'Ночёвка в палатке',address:'Кемпинг',duration:'☀️ Целый день',activity:'🏃 Активно',atmo:'🌿 Уединенно',budget:'💸 До 20 €',tags:['🌿','✨']},
+    {title:'Зимняя прогулка',address:'Заснеженный лес',duration:'🕑 1–2 часа',activity:'🚶 Прогулка',atmo:'😌 Спокойно',budget:'🆓 Бесплатно',tags:['😌','📸']},
+    {title:'Катание на лодке',address:'Лодочная станция',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸 До 20 €',tags:['❤️','😌']},
+  ]},
+  { key:'outside', name:'🚗 За городом', color:'#D4B483', places:[
+    {title:'Родельбан',address:'Горный парк',duration:'🌅 Полдня',activity:'🧗 Экстрим',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['✨','🎉']},
+    {title:'Замок / крепость',address:'Исторический замок',duration:'☀️ Целый день',activity:'🚶 Прогулка',atmo:'✨ Вау-эффект',budget:'💸 До 20 €',tags:['✨','📸']},
+    {title:'Необычная локация',address:'Секретное место',duration:'🌅 Полдня',activity:'🚶 Прогулка',atmo:'✨ Вау-эффект',budget:'🆓 Бесплатно',tags:['✨','🌿']},
+    {title:'Картодром',address:'Картодром',duration:'🕑 1–2 часа',activity:'🧗 Экстрим',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🧗','🎉']},
+    {title:'Конная прогулка',address:'Конная ферма',duration:'🕑 1–2 часа',activity:'🧗 Экстрим',atmo:'❤️ Романтично',budget:'💸💸💸 50–100 €',tags:['❤️','✨']},
+    {title:'Воздушный шар',address:'Полёт над городом',duration:'⚡ До часа',activity:'🧗 Экстрим',atmo:'✨ Вау-эффект',budget:'💎 100 €+',tags:['✨','❤️']},
+    {title:'Горнолыжный курорт',address:'Горнолыжный курорт',duration:'☀️ Целый день',activity:'🧗 Экстрим',atmo:'🎉 Весело',budget:'💸💸💸 50–100 €',tags:['🧗','📸']},
+    {title:'Загородный пикник',address:'За городом',duration:'🌅 Полдня',activity:'🚶 Прогулка',atmo:'❤️ Романтично',budget:'💸 До 20 €',tags:['❤️','😌']},
+    {title:'Старинный городок',address:'Старый город',duration:'☀️ Целый день',activity:'🚶 Прогулка',atmo:'💬 Для разговоров',budget:'💸 До 20 €',tags:['💬','📸']},
+    {title:'Сафари-парк',address:'Сафари-парк',duration:'🌅 Полдня',activity:'🚶 Прогулка',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['✨','📸']},
+    {title:'Зиплайн',address:'Верёвочный парк',duration:'⚡ До часа',activity:'🧗 Экстрим',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['🧗','✨']},
+    {title:'Ферма с животными',address:'Ферма',duration:'🌅 Полдня',activity:'🚶 Прогулка',atmo:'😌 Спокойно',budget:'💸 До 20 €',tags:['😌','📸']},
+    {title:'Водопад',address:'Природный водопад',duration:'☀️ Целый день',activity:'🏃 Активно',atmo:'✨ Вау-эффект',budget:'🆓 Бесплатно',tags:['✨','📸']},
+    {title:'Вертолётная прогулка',address:'Вертолётная площадка',duration:'⚡ До часа',activity:'🧗 Экстрим',atmo:'✨ Вау-эффект',budget:'💎 100 €+',tags:['✨','❤️']},
+    {title:'Загородное кафе',address:'Ресторан за городом',duration:'🌅 Полдня',activity:'🛋️ Расслабленно',atmo:'🕯️ Уютно',budget:'💸💸 20–50 €',tags:['🕯️','❤️']},
+    {title:'Поездка к морю',address:'Побережье',duration:'☀️ Целый день',activity:'🏃 Активно',atmo:'❤️ Романтично',budget:'💸💸 20–50 €',tags:['❤️','📸']},
+    {title:'Заброшенная усадьба',address:'Историческая усадьба',duration:'🌅 Полдня',activity:'🚶 Прогулка',atmo:'✨ Вау-эффект',budget:'🆓 Бесплатно',tags:['✨','📸']},
+    {title:'Кемпинг с ужином',address:'Кемпинг',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸💸 20–50 €',tags:['❤️','🌿']},
+    {title:'Дрифтинг',address:'Автодром',duration:'🕑 1–2 часа',activity:'🧗 Экстрим',atmo:'🎉 Весело',budget:'💸💸💸 50–100 €',tags:['🧗','🎉']},
+    {title:'Виноградник',address:'Винный тур',duration:'🌅 Полдня',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸💸💸 50–100 €',tags:['❤️','✨']},
+  ]},
+  { key:'cafe', name:'🍽️ Кафе и рестораны', color:'#C76D52', places:[
+    {title:'Ресторан со звёздами Мишлен',address:'Fine dining',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💎 100 €+',tags:['❤️','✨']},
+    {title:'Бранч в кафе',address:'Уютное кафе',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'🕯️ Уютно',budget:'💸💸 20–50 €',tags:['🕯️','💬']},
+    {title:'Этническая кухня',address:'Этнический ресторан',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['✨','💬']},
+    {title:'Specialty coffee',address:'Кофейня',duration:'⚡ До часа',activity:'🛋️ Расслабленно',atmo:'😌 Спокойно',budget:'💸 До 20 €',tags:['😌','💬']},
+    {title:'Ресторан на крыше',address:'Rooftop bar',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸💸💸 50–100 €',tags:['❤️','📸']},
+    {title:'Тематический ресторан',address:'Тематическое заведение',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['✨','🎉']},
+    {title:'Уличный рынок еды',address:'Фудмаркет',duration:'🕑 1–2 часа',activity:'🚶 Прогулка',atmo:'🎉 Весело',budget:'💸 До 20 €',tags:['🎉','📸']},
+    {title:'Дегустация вин',address:'Винный бар',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸💸 20–50 €',tags:['❤️','💬']},
+    {title:'Ночной рынок',address:'Night market',duration:'🌙 Весь вечер',activity:'🚶 Прогулка',atmo:'🎉 Весело',budget:'💸 До 20 €',tags:['🎉','📸']},
+    {title:'Завтрак в пекарне',address:'Уютная пекарня',duration:'⚡ До часа',activity:'🛋️ Расслабленно',atmo:'🕯️ Уютно',budget:'💸 До 20 €',tags:['🕯️','😌']},
+    {title:'Суши-ресторан',address:'Японский ресторан',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸💸💸 50–100 €',tags:['❤️']},
+    {title:'Гриль-барбекю',address:'BBQ ресторан',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🎉','💬']},
+    {title:'Ресторан с живой музыкой',address:'Jazz-ресторан',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸💸💸 50–100 €',tags:['❤️','✨']},
+    {title:'Мороженое-тур',address:'Лучшие мороженщики',duration:'🕑 1–2 часа',activity:'🚶 Прогулка',atmo:'🎉 Весело',budget:'💸 До 20 €',tags:['🎉','📸']},
+    {title:'Coffee дегустация',address:'Coffee lab',duration:'⚡ До часа',activity:'🧠 Интеллектуально',atmo:'💬 Для разговоров',budget:'💸 До 20 €',tags:['💬','🧠']},
+    {title:'Пиццерия с дровяной печью',address:'Итальянская пиццерия',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'🕯️ Уютно',budget:'💸💸 20–50 €',tags:['🕯️','❤️']},
+    {title:'Десертное кафе',address:'Кондитерская',duration:'⚡ До часа',activity:'🛋️ Расслабленно',atmo:'😌 Спокойно',budget:'💸 До 20 €',tags:['😌','📸']},
+    {title:'Ужин при свечах',address:'Романтический ресторан',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸💸💸 50–100 €',tags:['❤️','✨']},
+    {title:'Тапас-бар',address:'Испанский бар',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🎉','💬']},
+    {title:'Завтрак у воды',address:'Ресторан у воды',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸💸 20–50 €',tags:['❤️','📸']},
+  ]},
+  { key:'night', name:'🌙 Ночная жизнь', color:'#5B4B8A', places:[
+    {title:'Ночной клуб',address:'Лучший клуб города',duration:'🌙 Весь вечер',activity:'🏃 Активно',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🎉','✨']},
+    {title:'Коктейль-бар',address:'Cocktail bar',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸💸 20–50 €',tags:['❤️','💬']},
+    {title:'Казино',address:'Казино',duration:'🌙 Весь вечер',activity:'🧠 Интеллектуально',atmo:'✨ Вау-эффект',budget:'💸💸💸 50–100 €',tags:['✨','🎉']},
+    {title:'Нетворкинг-вечеринка',address:'Event-пространство',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🎉','💬']},
+    {title:'Тематическая вечеринка',address:'Клуб / лофт',duration:'🌙 Весь вечер',activity:'🏃 Активно',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['✨','🎉']},
+    {title:'Дискотека 80-х',address:'Ретро-клуб',duration:'🌙 Весь вечер',activity:'🏃 Активно',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🎉','✨']},
+    {title:'Летний бар',address:'Открытый воздух-бар',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'😌 Спокойно',budget:'💸💸 20–50 €',tags:['😌','📸']},
+    {title:'Вечер Jazz',address:'Jazz-бар',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸💸 20–50 €',tags:['❤️','🕯️']},
+    {title:'Рейв-вечеринка',address:'Андеграунд клуб',duration:'🌙 Весь вечер',activity:'🏃 Активно',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['✨','🎉']},
+    {title:'Пивной паб',address:'Паб',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🎉','💬']},
+    {title:'Стендап-комедия',address:'Стендап-клуб',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🎉','💬']},
+    {title:'Ночная экскурсия',address:'Ночной тур',duration:'🌙 Весь вечер',activity:'🚶 Прогулка',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['✨','📸']},
+    {title:'Поздний ужин в баре',address:'Late night bar',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'🕯️ Уютно',budget:'💸💸 20–50 €',tags:['🕯️','💬']},
+    {title:'Бар с живой музыкой',address:'Live music bar',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['✨','❤️']},
+    {title:'Ночной бег',address:'Ночной маршрут',duration:'🕑 1–2 часа',activity:'🏃 Активно',atmo:'😌 Спокойно',budget:'🆓 Бесплатно',tags:['🏃','📸']},
+    {title:'Вечерние танцы',address:'Танцевальная студия',duration:'🕑 1–2 часа',activity:'🏃 Активно',atmo:'🎉 Весело',budget:'💸💸 20–50 €',tags:['🎉','❤️']},
+    {title:'Ночной квест',address:'Ночной квест',duration:'🕑 1–2 часа',activity:'🧠 Интеллектуально',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['✨','🧠']},
+    {title:'Кино под открытым небом',address:'Open Air Cinema',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸 До 20 €',tags:['❤️','📸']},
+    {title:'Ночной фудмаркет',address:'Night market',duration:'🌙 Весь вечер',activity:'🚶 Прогулка',atmo:'🎉 Весело',budget:'💸 До 20 €',tags:['🎉','📸']},
+    {title:'Закрытая вечеринка',address:'Private event',duration:'🌙 Весь вечер',activity:'🏃 Активно',atmo:'✨ Вау-эффект',budget:'💸💸💸 50–100 €',tags:['✨','🎉']},
+  ]},
+  { key:'spa', name:'💆 Отдых и SPA', color:'#A7D8C9', places:[
+    {title:'Термы',address:'Термальный комплекс',duration:'🌅 Полдня',activity:'🛋️ Расслабленно',atmo:'😌 Спокойно',budget:'💸💸 20–50 €',tags:['😌','❤️']},
+    {title:'Парный массаж',address:'SPA-студия',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸💸💸 50–100 €',tags:['❤️','😌']},
+    {title:'Баня / хаммам',address:'Баня / хаммам',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'🕯️ Уютно',budget:'💸💸 20–50 €',tags:['🕯️','😌']},
+    {title:'SPA-комплекс в отеле',address:'Отель с SPA',duration:'☀️ Целый день',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💎 100 €+',tags:['❤️','✨']},
+    {title:'Флоат-капсула',address:'Float-студия',duration:'⚡ До часа',activity:'🛋️ Расслабленно',atmo:'✨ Вау-эффект',budget:'💸💸 20–50 €',tags:['✨','😌']},
+    {title:'Йога-ретрит',address:'Йога-студия',duration:'🌅 Полдня',activity:'🛋️ Расслабленно',atmo:'🌿 Уединенно',budget:'💸💸 20–50 €',tags:['🌿','😌']},
+    {title:'Аюрведический массаж',address:'Аюрведа-центр',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'😌 Спокойно',budget:'💸💸💸 50–100 €',tags:['😌']},
+    {title:'Соляная пещера',address:'Соляная пещера',duration:'⚡ До часа',activity:'🛋️ Расслабленно',atmo:'✨ Вау-эффект',budget:'💸 До 20 €',tags:['✨','😌']},
+    {title:'Горячие источники',address:'Природные источники',duration:'🌅 Полдня',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸 До 20 €',tags:['❤️','🌿']},
+    {title:'Обёртывание в SPA',address:'Beauty SPA',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'😌 Спокойно',budget:'💸💸💸 50–100 €',tags:['😌','❤️']},
+    {title:'Ретрит выходного дня',address:'Загородный ретрит',duration:'☀️ Целый день',activity:'🛋️ Расслабленно',atmo:'🌿 Уединенно',budget:'💎 100 €+',tags:['🌿','❤️']},
+    {title:'Медитативный сеанс',address:'Медитация-центр',duration:'⚡ До часа',activity:'🛋️ Расслабленно',atmo:'😌 Спокойно',budget:'💸 До 20 €',tags:['😌','🌿']},
+    {title:'Бассейн в отеле',address:'Отель с бассейном',duration:'🌅 Полдня',activity:'🏃 Активно',atmo:'❤️ Романтично',budget:'💸💸💸 50–100 €',tags:['❤️','📸']},
+    {title:'Маникюр вдвоём',address:'Nail bar',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'😌 Спокойно',budget:'💸💸 20–50 €',tags:['😌','💬']},
+    {title:'Инфракрасная сауна',address:'Wellness-студия',duration:'⚡ До часа',activity:'🛋️ Расслабленно',atmo:'😌 Спокойно',budget:'💸💸 20–50 €',tags:['😌']},
+    {title:'День в термальном отеле',address:'Термальный курорт',duration:'☀️ Целый день',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💎 100 €+',tags:['❤️','✨']},
+    {title:'Шоколадный массаж',address:'Premium SPA',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💸💸💸 50–100 €',tags:['❤️','✨']},
+    {title:'Бальнеотерапия',address:'SPA-отель',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'😌 Спокойно',budget:'💸💸💸 50–100 €',tags:['😌']},
+    {title:'Лимфодренажный массаж',address:'Wellness-центр',duration:'🕑 1–2 часа',activity:'🛋️ Расслабленно',atmo:'😌 Спокойно',budget:'💸💸 20–50 €',tags:['😌']},
+    {title:'SPA-ужин',address:'SPA с ужином',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'💎 100 €+',tags:['❤️','✨']},
+  ]},
+];
+
+const SECRETS = [
+  {title:'✨ Сюрприз #1',address:'Секретное место',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'✨ Вау-эффект',budget:'???',tags:['✨','❤️']},
+  {title:'✨ Сюрприз #2',address:'Секретное место',duration:'🌅 Полдня',activity:'🚶 Прогулка',atmo:'❤️ Романтично',budget:'???',tags:['❤️','✨']},
+  {title:'✨ Сюрприз #3',address:'Секретное место',duration:'⚡ До часа',activity:'🎨 Творчески',atmo:'❤️ Романтично',budget:'???',tags:['❤️']},
+  {title:'✨ Сюрприз #4',address:'Секретное место',duration:'☀️ Целый день',activity:'🧗 Экстрим',atmo:'✨ Вау-эффект',budget:'???',tags:['✨']},
+  {title:'✨ Сюрприз #5',address:'Секретное место',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'🕯️ Уютно',budget:'???',tags:['🕯️','❤️']},
+  {title:'✨ Сюрприз #6',address:'Секретное место',duration:'🕑 1–2 часа',activity:'🤲 Своими руками',atmo:'✨ Вау-эффект',budget:'???',tags:['✨','🤲']},
+  {title:'✨ Сюрприз #7',address:'Секретное место',duration:'🌅 Полдня',activity:'🧠 Интеллектуально',atmo:'💬 Для разговоров',budget:'???',tags:['💬']},
+  {title:'✨ Сюрприз #8',address:'Секретное место',duration:'🌙 Весь вечер',activity:'🏃 Активно',atmo:'🎉 Весело',budget:'???',tags:['🎉','✨']},
+  {title:'✨ Сюрприз #9',address:'Секретное место',duration:'⚡ До часа',activity:'🛋️ Расслабленно',atmo:'❤️ Романтично',budget:'???',tags:['❤️']},
+  {title:'✨ Сюрприз #10',address:'Секретное место',duration:'☀️ Целый день',activity:'🚶 Прогулка',atmo:'✨ Вау-эффект',budget:'???',tags:['✨','🌿']},
+];
+
+const opened = JSON.parse(localStorage.getItem('dates_opened') || '{}');
+const links = JSON.parse(localStorage.getItem('dates_links') || '{}');
+let currentCellId = null;
+
+const mainEl = document.getElementById('main');
+let globalN = 0;
+
+CATS.forEach(cat => {
+  const block = document.createElement('div');
+  block.className = 'category-block';
+  block.innerHTML = `<div class="category-header"><div class="category-name">${cat.name}</div><div class="category-count">20 идей</div></div>`;
+  const grid = document.createElement('div');
+  grid.className = 'cells-grid';
+  cat.places.forEach((place, i) => {
+    globalN++;
+    const n = globalN;
+    const cellId = `${cat.key}_${i}`;
+    const cell = document.createElement('div');
+    cell.className = 'cell' + (opened[cellId] ? ' opened' : '');
+    cell.style.background = cat.color;
+    cell.setAttribute('data-cell-id', cellId);
+    cell.innerHTML = `<span class="cell-number">${n}</span>`;
+    cell.addEventListener('click', () => openModal(n, place, cat, cellId));
+    grid.appendChild(cell);
+  });
+  block.appendChild(grid);
+  mainEl.appendChild(block);
+});
+
+const secretBlock = document.createElement('div');
+secretBlock.className = 'category-block';
+secretBlock.innerHTML = '<div class="category-header"><div class="category-name">✨ Секретные</div><div class="category-count">10 сюрпризов</div></div>';
+const sGrid = document.createElement('div');
+sGrid.className = 'cells-grid';
+SECRETS.forEach((place, i) => {
+  globalN++;
+  const n = globalN;
+  const cellId = `secret_${i}`;
+  const cell = document.createElement('div');
+  cell.className = 'cell secret' + (opened[cellId] ? ' opened' : '');
+  cell.setAttribute('data-cell-id', cellId);
+  cell.innerHTML = `<span class="cell-number">${n}</span>`;
+  cell.addEventListener('click', () => openModal(n, place, {name:'✨ Секрет', color:'#E6A5B5'}, cellId));
+  sGrid.appendChild(cell);
+});
+secretBlock.appendChild(sGrid);
+mainEl.appendChild(secretBlock);
+
+const overlay = document.getElementById('modalOverlay');
+const doneBtn = document.getElementById('modalDoneBtn');
+const linkInsta = document.getElementById('linkInsta');
+const linkSite = document.getElementById('linkSite');
+const linkInstaOpen = document.getElementById('linkInstaOpen');
+const linkSiteOpen = document.getElementById('linkSiteOpen');
+
+function updateLinkBtn(input, btn) {
+  const v = input.value.trim();
+  const url = v.startsWith('http') ? v : (v ? 'https://'+v : '');
+  if (url) { btn.href = url; btn.classList.add('visible'); }
+  else { btn.href = '#'; btn.classList.remove('visible'); }
+}
+
+linkInsta.addEventListener('input', () => {
+  updateLinkBtn(linkInsta, linkInstaOpen);
+  if (currentCellId) {
+    if (!links[currentCellId]) links[currentCellId] = {};
+    links[currentCellId].insta = linkInsta.value;
+    localStorage.setItem('dates_links', JSON.stringify(links));
+  }
+});
+linkSite.addEventListener('input', () => {
+  updateLinkBtn(linkSite, linkSiteOpen);
+  if (currentCellId) {
+    if (!links[currentCellId]) links[currentCellId] = {};
+    links[currentCellId].site = linkSite.value;
+    localStorage.setItem('dates_links', JSON.stringify(links));
+  }
+});
+
+function openModal(n, place, cat, cellId) {
+  currentCellId = cellId;
+  document.getElementById('modalNumber').textContent = `Идея № ${n}`;
+  document.getElementById('modalTitle').textContent = place.title;
+  document.getElementById('modalAddressText').textContent = place.address;
+  const descEl = document.getElementById('modalDesc');
+  if (place.desc) {
+    descEl.textContent = place.desc;
+    descEl.style.color = 'var(--ink-soft)';
+  } else {
+    descEl.textContent = 'Описание места...';
+    descEl.style.color = 'rgba(107,101,96,0.4)';
+  }
+  document.getElementById('modalDuration').textContent = place.duration;
+  document.getElementById('modalActivity').textContent = place.activity;
+  document.getElementById('modalBudget').textContent = place.budget;
+  document.getElementById('modalTags').innerHTML = [place.atmo.split(' ')[0], ...place.tags].map(emoji => {
+    const label = TAG_LABELS[emoji] || emoji;
+    return `<span class="modal-tag" title="${label}">${emoji}<span class="modal-tag-tooltip">${label}</span></span>`;
+  }).join('');
+  document.getElementById('modalPhoto').style.background = `linear-gradient(160deg, ${cat.color}dd, ${cat.color}88)`;
+  document.getElementById('modalCatPill').textContent = cat.name;
+  document.getElementById('modalDivider').style.background = cat.color;
+  const saved = links[cellId] || {};
+  linkInsta.value = saved.insta || '';
+  linkSite.value = saved.site || '';
+  updateLinkBtn(linkInsta, linkInstaOpen);
+  updateLinkBtn(linkSite, linkSiteOpen);
+  const isOpened = !!opened[cellId];
+  doneBtn.textContent = isOpened ? '✓ Уже сходили!' : 'Отметить «Сходили» ✓';
+  doneBtn.className = 'modal-done-btn' + (isOpened ? ' done' : '');
+  overlay.classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  overlay.classList.remove('visible');
+  document.body.style.overflow = '';
+  currentCellId = null;
+}
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+doneBtn.addEventListener('click', () => {
+  if (!currentCellId) return;
+  if (opened[currentCellId]) delete opened[currentCellId];
+  else opened[currentCellId] = true;
+  localStorage.setItem('dates_opened', JSON.stringify(opened));
+  const isNow = !!opened[currentCellId];
+  doneBtn.textContent = isNow ? '✓ Уже сходили!' : 'Отметить «Сходили» ✓';
+  doneBtn.className = 'modal-done-btn' + (isNow ? ' done' : '');
+  const el = document.querySelector(`[data-cell-id="${currentCellId}"]`);
+  if (el) isNow ? el.classList.add('opened') : el.classList.remove('opened');
+});
+
+const toggle = document.getElementById('instrToggle');
+const instrBody = document.getElementById('instrBody');
+toggle.addEventListener('click', () => {
+  const isOpen = instrBody.classList.toggle('visible');
+  toggle.classList.toggle('open', isOpen);
+  toggle.setAttribute('aria-expanded', isOpen);
+  toggle.style.borderRadius = isOpen ? '12px 12px 0 0' : '12px';
+});
+</script>
+</body>
+</html>
