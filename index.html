@@ -255,15 +255,24 @@ body {
 .modal-tag:hover .modal-tag-tooltip { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
 .modal-tag-tooltip { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%) translateY(4px); background: var(--ink); color: white; font-size: 10px; font-weight: 500; padding: 4px 8px; border-radius: 6px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.15s, transform 0.15s; z-index: 20; }
 
-.modal-links { display: flex; gap: 8px; margin-top: 12px; }
-.modal-link-field { flex: 1; position: relative; }
-.modal-link-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; pointer-events: none; }
-.modal-link-input { width: 100%; padding: 8px 10px 8px 30px; border-radius: 8px; border: 1.5px solid var(--border); background: white; font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink); transition: border-color 0.2s; outline: none; }
-.modal-link-input::placeholder { color: rgba(107,101,96,0.5); }
-.modal-link-input:focus { border-color: rgba(28,26,24,0.3); }
-.modal-link-open { display: none; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; background: var(--ink); color: white; text-decoration: none; font-size: 12px; flex-shrink: 0; margin-top: 2px; transition: opacity 0.2s; }
-.modal-link-open:hover { opacity: 0.8; }
-.modal-link-open.visible { display: flex; }
+.modal-link-btns { display: flex; gap: 8px; margin-top: 12px; }
+.modal-link-btn {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.18s, transform 0.18s;
+  cursor: pointer;
+}
+.modal-link-btn:hover { opacity: 0.82; transform: translateY(-1px); }
+.modal-link-btn.insta { background: linear-gradient(135deg, #f9ce34, #ee2a7b, #6228d7); color: white; }
+.modal-link-btn.site  { background: var(--ink); color: white; }
+.modal-link-btn.disabled { background: rgba(0,0,0,0.06); color: rgba(107,101,96,0.45); pointer-events: none; cursor: default; }
+.modal-link-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 
 .modal-done-btn { margin-top: 12px; padding: 11px; border-radius: 10px; border: 1.5px solid rgba(0,0,0,0.12); background: none; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink-soft); cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em; width: 100%; }
 .modal-done-btn:hover { background: var(--ink); color: white; border-color: var(--ink); }
@@ -379,7 +388,8 @@ body {
     <button class="modal-close" id="modalClose" aria-label="Закрыть">✕</button>
     <div class="modal-photo" id="modalPhoto">
       <div class="modal-cat-pill" id="modalCatPill"></div>
-      <div class="modal-photo-placeholder">
+      <img id="modalPhotoImg" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:none;">
+      <div class="modal-photo-placeholder" id="modalPhotoPlaceholder">
         <svg width="36" height="36" viewBox="0 0 44 44" fill="none"><path d="M4 36 L16 16 L24 26 L30 20 L40 36Z" stroke="white" stroke-width="1.5" stroke-linejoin="round" fill="none"/><circle cx="33" cy="12" r="4" stroke="white" stroke-width="1.5" fill="none"/></svg>
         <span>Фото места</span>
       </div>
@@ -392,20 +402,22 @@ body {
         <span id="modalAddressText"></span>
       </div>
       <div class="modal-divider" id="modalDivider"></div>
-      <div class="modal-desc" id="modalDesc">Добавьте описание места...</div>
+      <div class="modal-desc" id="modalDesc"></div>
       <div class="modal-meta">
         <div class="modal-meta-item"><div class="modal-meta-label">⏱ Длительность</div><div class="modal-meta-value" id="modalDuration"></div></div>
         <div class="modal-meta-item"><div class="modal-meta-label">⚡ Активность</div><div class="modal-meta-value" id="modalActivity"></div></div>
         <div class="modal-meta-item"><div class="modal-meta-label">💰 Бюджет</div><div class="modal-meta-value" id="modalBudget"></div></div>
       </div>
       <div class="modal-tags" id="modalTags"></div>
-      <div class="modal-links">
-        <div class="modal-link-field"><span class="modal-link-icon">📸</span><input class="modal-link-input" id="linkInsta" type="url" placeholder="Instagram / ссылка"></div>
-        <a class="modal-link-open" id="linkInstaOpen" target="_blank" rel="noopener" title="Открыть">↗</a>
-      </div>
-      <div class="modal-links">
-        <div class="modal-link-field"><span class="modal-link-icon">🌐</span><input class="modal-link-input" id="linkSite" type="url" placeholder="Сайт / ссылка"></div>
-        <a class="modal-link-open" id="linkSiteOpen" target="_blank" rel="noopener" title="Открыть">↗</a>
+      <div class="modal-link-btns" id="modalLinkBtns">
+        <a id="modalInstaBtn" class="modal-link-btn insta" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          Instagram
+        </a>
+        <a id="modalSiteBtn" class="modal-link-btn site" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+          Сайт
+        </a>
       </div>
     </div>
     <div class="modal-footer">
@@ -596,7 +608,6 @@ const SECRETS = [
 ];
 
 const opened = JSON.parse(localStorage.getItem('dates_opened') || '{}');
-const links = JSON.parse(localStorage.getItem('dates_links') || '{}');
 let currentCellId = null;
 
 const mainEl = document.getElementById('main');
@@ -645,48 +656,36 @@ mainEl.appendChild(secretBlock);
 
 const overlay = document.getElementById('modalOverlay');
 const doneBtn = document.getElementById('modalDoneBtn');
-const linkInsta = document.getElementById('linkInsta');
-const linkSite = document.getElementById('linkSite');
-const linkInstaOpen = document.getElementById('linkInstaOpen');
-const linkSiteOpen = document.getElementById('linkSiteOpen');
-
-function updateLinkBtn(input, btn) {
-  const v = input.value.trim();
-  const url = v.startsWith('http') ? v : (v ? 'https://'+v : '');
-  if (url) { btn.href = url; btn.classList.add('visible'); }
-  else { btn.href = '#'; btn.classList.remove('visible'); }
-}
-
-linkInsta.addEventListener('input', () => {
-  updateLinkBtn(linkInsta, linkInstaOpen);
-  if (currentCellId) {
-    if (!links[currentCellId]) links[currentCellId] = {};
-    links[currentCellId].insta = linkInsta.value;
-    localStorage.setItem('dates_links', JSON.stringify(links));
-  }
-});
-linkSite.addEventListener('input', () => {
-  updateLinkBtn(linkSite, linkSiteOpen);
-  if (currentCellId) {
-    if (!links[currentCellId]) links[currentCellId] = {};
-    links[currentCellId].site = linkSite.value;
-    localStorage.setItem('dates_links', JSON.stringify(links));
-  }
-});
-
 function openModal(n, place, cat, cellId) {
   currentCellId = cellId;
   document.getElementById('modalNumber').textContent = `Идея № ${n}`;
   document.getElementById('modalTitle').textContent = place.title;
   document.getElementById('modalAddressText').textContent = place.address;
+
+  // Фото
+  const img = document.getElementById('modalPhotoImg');
+  const placeholder = document.getElementById('modalPhotoPlaceholder');
+  const photoWrap = document.getElementById('modalPhoto');
+  if (place.photo) {
+    img.src = place.photo;
+    img.style.display = 'block';
+    placeholder.style.display = 'none';
+    photoWrap.style.background = '';
+  } else {
+    img.style.display = 'none';
+    placeholder.style.display = 'flex';
+    photoWrap.style.background = `linear-gradient(160deg, ${cat.color}dd, ${cat.color}88)`;
+  }
+
+  // Описание
   const descEl = document.getElementById('modalDesc');
   if (place.desc) {
     descEl.textContent = place.desc;
-    descEl.style.color = 'var(--ink-soft)';
+    descEl.style.display = 'block';
   } else {
-    descEl.textContent = 'Описание места...';
-    descEl.style.color = 'rgba(107,101,96,0.4)';
+    descEl.style.display = 'none';
   }
+
   document.getElementById('modalDuration').textContent = place.duration;
   document.getElementById('modalActivity').textContent = place.activity;
   document.getElementById('modalBudget').textContent = place.budget;
@@ -694,14 +693,27 @@ function openModal(n, place, cat, cellId) {
     const label = TAG_LABELS[emoji] || emoji;
     return `<span class="modal-tag" title="${label}">${emoji}<span class="modal-tag-tooltip">${label}</span></span>`;
   }).join('');
-  document.getElementById('modalPhoto').style.background = `linear-gradient(160deg, ${cat.color}dd, ${cat.color}88)`;
   document.getElementById('modalCatPill').textContent = cat.name;
   document.getElementById('modalDivider').style.background = cat.color;
-  const saved = links[cellId] || {};
-  linkInsta.value = saved.insta || '';
-  linkSite.value = saved.site || '';
-  updateLinkBtn(linkInsta, linkInstaOpen);
-  updateLinkBtn(linkSite, linkSiteOpen);
+
+  // Кнопки ссылок
+  const instaBtn = document.getElementById('modalInstaBtn');
+  const siteBtn  = document.getElementById('modalSiteBtn');
+  if (place.insta) {
+    instaBtn.href = place.insta;
+    instaBtn.className = 'modal-link-btn insta';
+  } else {
+    instaBtn.href = '#';
+    instaBtn.className = 'modal-link-btn disabled';
+  }
+  if (place.site) {
+    siteBtn.href = place.site;
+    siteBtn.className = 'modal-link-btn site';
+  } else {
+    siteBtn.href = '#';
+    siteBtn.className = 'modal-link-btn disabled';
+  }
+
   const isOpened = !!opened[cellId];
   doneBtn.textContent = isOpened ? '✓ Уже сходили!' : 'Отметить «Сходили» ✓';
   doneBtn.className = 'modal-done-btn' + (isOpened ? ' done' : '');
@@ -742,3 +754,4 @@ toggle.addEventListener('click', () => {
 </script>
 </body>
 </html>
+
