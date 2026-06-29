@@ -322,48 +322,6 @@ body {
         <div class="instr-cat-item" style="background:#E6A5B522;border-left-color:#E6A5B5"><div class="instr-cat-dot" style="background:#E6A5B5"></div><div><div class="instr-cat-name">✨ Секретные</div><div class="instr-cat-desc">10 особых сюрпризов — загадочные свидания, о которых знаешь только ты</div></div></div>
       </div>
     </div>
-    <div class="instr-tags">
-      <div class="instr-tags-title">Расшифровка тегов</div>
-      <div class="instr-tags-cols">
-        <div class="instr-tag-group">
-          <div class="instr-tag-group-title">❤️ Атмосфера</div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">❤️</span><span class="instr-tag-label">Романтично</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">✨</span><span class="instr-tag-label">Вау-эффект</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">🕯️</span><span class="instr-tag-label">Уютно</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">😌</span><span class="instr-tag-label">Спокойно</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">🎉</span><span class="instr-tag-label">Весело</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">🌿</span><span class="instr-tag-label">Уединенно</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">💬</span><span class="instr-tag-label">Для разговоров</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">📸</span><span class="instr-tag-label">Инстаграмно</span></div>
-        </div>
-        <div class="instr-tag-group">
-          <div class="instr-tag-group-title">💰 Стоимость</div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">🆓</span><span class="instr-tag-label">Бесплатно</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">💸</span><span class="instr-tag-label">До 20 €</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">💸💸</span><span class="instr-tag-label">20–50 €</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">💸💸💸</span><span class="instr-tag-label">50–100 €</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">💎</span><span class="instr-tag-label">100 €+</span></div>
-        </div>
-        <div class="instr-tag-group">
-          <div class="instr-tag-group-title">⏱️ Длительность</div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">⚡</span><span class="instr-tag-label">До часа</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">🕑</span><span class="instr-tag-label">1–2 часа</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">🌅</span><span class="instr-tag-label">Полдня</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">🌙</span><span class="instr-tag-label">Весь вечер</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">☀️</span><span class="instr-tag-label">Целый день</span></div>
-        </div>
-        <div class="instr-tag-group">
-          <div class="instr-tag-group-title">⚡ Активность</div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">🛋️</span><span class="instr-tag-label">Расслабленно</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">🚶</span><span class="instr-tag-label">Прогулка</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">🏃</span><span class="instr-tag-label">Активно</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">🧗</span><span class="instr-tag-label">Экстрим</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">🧠</span><span class="instr-tag-label">Интеллектуально</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">🎨</span><span class="instr-tag-label">Творчески</span></div>
-          <div class="instr-tag-row"><span class="instr-tag-emoji">🤲</span><span class="instr-tag-label">Своими руками</span></div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -408,7 +366,6 @@ body {
         <div class="modal-meta-item"><div class="modal-meta-label">⚡ Активность</div><div class="modal-meta-value" id="modalActivity"></div></div>
         <div class="modal-meta-item"><div class="modal-meta-label">💰 Бюджет</div><div class="modal-meta-value" id="modalBudget"></div></div>
       </div>
-      <div class="modal-tags" id="modalTags"></div>
       <div class="modal-link-btns" id="modalLinkBtns">
         <a id="modalInstaBtn" class="modal-link-btn insta" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
@@ -439,7 +396,7 @@ const TAG_LABELS = {
 
 const CATS = [
   { key:'home', name:'🏠 Дома', color:'#F4EBDD', places:[
-    {title:'Холостяк',address:'Ваш диван',duration:'☀️ Целый день',activity:'🛋️ Расслабленно',atmo:'🕯️ Уютно',budget:'🆓 Бесплатно',tags:['❤️','🕯️'],desc:'Незабываемый вечер с вином и Егором Кринжем.',photo:'https://www.amic.ru/images/news/news/533618_size1.jpg?v=1'},
+    {title:'Кино-вечер дома',address:'Ваш диван',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'🕯️ Уютно',budget:'🆓 Бесплатно',tags:['❤️','🕯️'],desc:'Выбираете фильм, делаете попкорн, укутываетесь в плед — идеальный вечер без планов.',photo:'https://images.unsplash.com/photo-1585647347483-22b66260dfff?w=600&q=80',insta:'',site:''},
     {title:'Готовим вместе',address:'Ваша кухня',duration:'🕑 1–2 часа',activity:'🤲 Своими руками',atmo:'🎉 Весело',budget:'💸 До 20 €',tags:['🎉','🤲'],desc:'Выбираете новый рецепт, делите задачи и устраиваете маленький хаос на кухне.',photo:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80',insta:'https://instagram.com',site:''},
     {title:'Настольные игры',address:'Ваш дом',duration:'🌙 Весь вечер',activity:'🧠 Интеллектуально',atmo:'🎉 Весело',budget:'🆓 Бесплатно',tags:['🎉','💬'],desc:'Кто из вас более стратег? Проверьте за Каркассоном, Колонистами или Диxit.',photo:'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=600&q=80',insta:'',site:''},
     {title:'Видеоигры вдвоём',address:'Ваш дом',duration:'🌙 Весь вечер',activity:'🛋️ Расслабленно',atmo:'😌 Спокойно',budget:'🆓 Бесплатно',tags:['🎉'],photo:'',desc:'',insta:'',site:''},
@@ -689,10 +646,6 @@ function openModal(n, place, cat, cellId) {
   document.getElementById('modalDuration').textContent = place.duration;
   document.getElementById('modalActivity').textContent = place.activity;
   document.getElementById('modalBudget').textContent = place.budget;
-  document.getElementById('modalTags').innerHTML = [place.atmo.split(' ')[0], ...place.tags].map(emoji => {
-    const label = TAG_LABELS[emoji] || emoji;
-    return `<span class="modal-tag" title="${label}">${emoji}<span class="modal-tag-tooltip">${label}</span></span>`;
-  }).join('');
   document.getElementById('modalCatPill').textContent = cat.name;
   document.getElementById('modalDivider').style.background = cat.color;
 
